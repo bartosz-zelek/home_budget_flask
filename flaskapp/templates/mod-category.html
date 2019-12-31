@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+
+{% block contentmain %}
+<h1 class="font-weight-bolder">Modyfikuj kategorie</h1>
+<hr>
+<div class="row mt-5">
+    <div class="col-lg">
+        <h4 class="text-success text-center mb-4">Dodaj kategorię przychodów</h4>
+        <form method="POST">
+            {{ income_category_form.hidden_tag() }}
+            <div class="form-group">
+                {{ income_category_form.name_income.label }}
+                {% if income_category_form.name_income.errors %}
+                {{ income_category_form.name_income(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in income_category_form.name_income.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ income_category_form.name_income(class='form-control') }}
+                {% endif %}
+            </div>
+            {{ income_category_form.submit_income(class='btn btn-primary') }}
+        </form>
+        <div class="card mt-4 mb-5">
+            <div class="card-header">
+                Kategorie przychodów
+            </div>
+            {% for category in income_categories %}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    {{ category.name.capitalize() }}
+                    <a class="fas fa-trash float-right delete-icon text-danger" href="{{ url_for('budget.mod_category', delcatid=category.id) }}"></a>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="border-left"></div>
+
+    <div class="col-lg">
+        <h4 class="text-danger text-center mb-4">Dodaj kategorię wydatków</h4>
+        <form method="POST">
+            {{ expense_category_form.hidden_tag() }}
+            <div class="form-group">
+                {{ expense_category_form.name_expense.label }}
+                {% if expense_category_form.name_expense.errors %}
+                {{ expense_category_form.name_expense(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in expense_category_form.name_expense.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ expense_category_form.name_expense(class='form-control') }}
+                {% endif %}
+            </div>
+            {{ expense_category_form.submit_expense(class='btn btn-primary') }}
+        </form>
+        <div class="card mt-4">
+            <div class="card-header">
+                Kategorie wydatków
+            </div>
+            {% for category in expense_categories %}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    {{ category.name }}
+                    <a class="fas fa-trash float-right delete-icon text-danger" href="{{ url_for('budget.mod_category', delcatid=category.id) }}"></a>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock contentmain %}

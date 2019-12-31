@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Icons made by https://www.flaticon.com/authors/ultimatearm ultimatearm from https://www.flaticon.com/" www.flaticon.com -->
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='budget_icon.png') }}"/>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans&display=swap&subset=latin-ext"
+          rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://kit.fontawesome.com/3a08b33754.js" crossorigin="anonymous"></script>
+
+
+    {% if title %}
+    <title>HomeCash - {{title}}</title>
+    {% else %}
+    <title>HomeCash</title>
+    {% endif %}
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+    <a class="navbar-brand mr-5" href="{{ url_for('budget.main') }}">
+        <!-- Icons made by https://www.flaticon.com/authors/ultimatearm ultimatearm from https://www.flaticon.com/" www.flaticon.com -->
+        <img src="{{ url_for('static', filename='budget.png') }}" width="50" height="50"
+             class="d-inline-block align-top" alt="Budget Logo">
+        HomeCash
+    </a>
+    {% if current_user.is_authenticated %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a href="{{ url_for('budget.main') }}" class="nav-link">Panel główny</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a href="{{ url_for('budget.mod_budget_actions') }}" class="nav-link">Wszystkie transakcje</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a href="{{ url_for('budget.mod_category') }}" class="nav-link">Modyfikacja kategorii</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a href="{{ url_for('users.logout') }}" class="nav-link">Wyloguj się</a>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+</nav>
+
+<div class="container p-4 mb-5">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    {% block content %}
+
+    {% endblock content %}
+</div>
+<!--    <div class="mt-5 mb-5">&nbsp;</div>-->
+<footer class="fixed-bottom text-center p-2 bg-dark"><h6>Wszelkie prawa zastrzeżone &copy; Bartosz Żelek 2020</h6>
+</footer>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+{% if income_error %}
+<script>$('#addIncomeModal').modal('show')</script>
+{% endif %}
+{% if form_income_mod %}
+<script>$('#addIncomeModal').modal('show')</script>
+{% endif %}
+{% if form_expense_mod %}
+<script>$('#addExpenseModal').modal('show')</script>
+{% endif %}
+{% if expense_error %}
+<script>$('#addExpenseModal').modal('show')</script>
+{% endif %}
+{% if delete_category %}
+<script>$('#deleteCategoryModal').modal('show')</script>
+{% endif %}
+</body>
+</html>

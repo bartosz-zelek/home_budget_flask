@@ -1,0 +1,94 @@
+<!-- ExpenseModal -->
+    <div class="modal fade addExpenseModal" id="addExpenseModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <form method="POST">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addExpenseModalLabel">Modyfikacja wydatku</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+                <div class="modal-body">
+
+                      {{ form_expense_mod.hidden_tag() }}
+                      <div class="form-group">
+                          {{ form_expense_mod.amount_expense.label }}
+                          {% if form_expense_mod.amount_expense.errors %}
+                            {{ form_expense_mod.amount_expense(class='form-control is-invalid', type='number', step='0.01') }}
+                            <div class="invalid-feedback">
+                                {% for error in form_expense_mod.amount_expense.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ form_expense_mod.amount_expense(class='form-control', type='number', step='0.01') }}
+                          {% endif %}
+                      </div>
+                      <div class="form-group">
+                        {{ form_expense_mod.title_expense.label }}
+                        {% if form_expense_mod.title_expense.errors %}
+                            {{ form_expense_mod.title_expense(class='form-control is-invalid') }}
+                            <div class="invalid-feedback">
+                                {% for error in form_expense_mod.title_expense.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ form_expense_mod.title_expense(class='form-control') }}
+                          {% endif %}
+                      </div>
+                      <div class="form-group">
+                        {{ form_expense_mod.category_expense.label }}
+                        {% if form_expense_mod.category_expense.errors %}
+                            {{ form_expense_mod.category_expense(class='form-control is-invalid') }}
+                            <div class="invalid-feedback">
+                                {% for error in form_expense_mod.category_expense.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ form_expense_mod.category_expense(class='form-control') }}
+                          {% endif %}
+                      </div>
+                      <div class="form-group">
+                        {{ form_expense_mod.date_expense.label }}
+                        {% if form_expense_mod.date_expense.errors %}
+                            {{ form_expense_mod.date_expense(class='form-control is-invalid', type='date') }}
+                            <div class="invalid-feedback">
+                                {% for error in form_expense_mod.date_expense.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ form_expense_mod.date_expense(class='form-control', type='date') }}
+                          {% endif %}
+                      </div>
+                      <div class="form-group">
+                        {{ form_expense_mod.source_expense.label }}
+                        {% if form_expense_mod.source_expense.errors %}
+                            {{ form_expense_mod.source_expense(class='form-control is-invalid') }}
+                            <div class="invalid-feedback">
+                                {% for error in form_expense_mod.source_expense.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                          {% else %}
+                            {{ form_expense_mod.source_expense(class='form-control') }}
+                          {% endif %}
+                      </div>
+                      <div class="form-group form-check">
+                        {{ form_expense_mod.remember_expense(class='form-check-input') }}
+                        {{ form_expense_mod.remember_expense.label(class='form-check-label') }}
+                      </div>
+
+              </div>
+              <div class="modal-footer">
+                  <a href="{{ url_for('budget.mod_budget_actions', delete_action_id=action.id) }}" class="btn btn-danger mr-auto">Usuń wydatek</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                {{ form_expense_mod.submit_expense(class='btn btn-primary') }}
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>

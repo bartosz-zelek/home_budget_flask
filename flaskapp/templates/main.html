@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                Posiadane środki
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Łącznie:
+                    <div class="float-right {% if funds.sum > 0 %}text-success{% endif %}{% if funds.sum < 0 %}text-danger{% endif %}">
+                        {{ funds.sum }} PLN
+                    </div>
+                </li>
+            </ul>
+            <div class="card-header">
+                Umiejscowienie środków
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Portfel:
+                    <div class="float-right {% if funds.wallet > 0 %}text-success{% endif %}{% if funds.wallet < 0 %}text-danger{% endif %}">
+                        {{ funds.wallet }} PLN
+                    </div>
+                </li>
+                <li class="list-group-item">Konta:
+                    <div class="float-right {% if funds.account > 0 %}text-success{% endif %}{% if funds.account < 0 %}text-danger{% endif %}">
+                        {{ funds.account }} PLN
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="card-header">
+                        Oszczędności
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Skarbonki:
+                            <div class="float-right {% if funds.saving.moneybox > 0 %}text-success{% endif %}{% if funds.saving.moneybox < 0 %}text-danger{% endif %}">
+                                {{ funds.saving.moneybox }} PLN
+                            </div>
+                        </li>
+                        <li class="list-group-item">Lokaty:
+                            <div class="float-right {% if funds.saving.deposit > 0 %}text-success{% endif %}{% if funds.saving.deposit < 0 %}text-danger{% endif %}">
+                                {{ funds.saving.deposit }} PLN
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        {% block contentmain %}
+
+        {% endblock contentmain %}
+    </div>
+</div>
+{% endblock content %}

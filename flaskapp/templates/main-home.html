@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+
+{% block contentmain %}
+<a href="#addExpenseModal" data-toggle="modal" data-target="#addExpenseModal"
+   class="btn btn-danger mt-2 float-right col-md-3"><i class="fas fa-minus mr-3"></i>Dodaj wydatek&nbsp;</a>
+<a href="#addIncomeModal" data-toggle="modal" data-target="#addIncomeModal"
+   class="btn btn-success mt-2 float-right col-md-3 mr-md-3 mb-3"><i class="fas fa-plus mr-3"></i>Dodaj przychód</a><br>
+<br>
+<h1 class="text-center mt-3 font-weight-bolder">{{ month }}</h1>
+<hr>
+<h2 class="mt-5">Bilans <span
+        class="{% if bilans > 0 %}text-success{% endif %}{% if bilans < 0 %}text-danger{% endif %}">{{ bilans }}</span><small
+        class="text-muted font-size"> PLN</small></h2>
+<picture>
+    <source media="(min-width: 415px)"
+            srcset="{{ url_for('static', filename='plots/'+income_expense_plot_name+'.png') }}">
+    <img src="{{ url_for('static', filename='plots/'+income_expense_plot_name+'_mobile.png') }}" class="img-fluid mt-3">
+</picture>
+<hr>
+<h2 class="mt-5">Zestawienie transakcji</h2>
+<table class="table table-responsive-sm">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Kategoria</th>
+        <th scope="col">Kwota<small class="text-muted">(PLN)</small></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for action in actions_month_choosed %}
+    <tr>
+        <td>{{ action.date.strftime('%d.%m.%Y') }}</td>
+        <td>{% if action.budget_action_category_id > 0 %}{{ action.budget_action_category.name.capitalize() }}{% else %}Brak
+            kategorii{% endif %}
+        </td>
+        <td>{% if action.budget_action_type_id == income_id %}<span class="text-success">+{{ action.amount }}</span>{%
+            endif %}{% if action.budget_action_type_id == expense_id %}<span
+                    class="text-danger">-{{ action.amount }}</span>{% endif %}
+        </td>
+        <td><a class="fas fa-edit edit-icon text-dark" href="{{ url_for('budget.mod_budget_actions', action_id=action.id) }}"></a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<hr>
+<div class="row text-center">
+    <div class="col-lg">
+        <h2 class="mt-5">Przychody<br> <span class="text-success">{{ incomes_month_choosed }}</span><small
+                class="text-muted font-size"> PLN</small></h2>
+        <picture>
+            <img src="{{ url_for('static', filename='plots/'+income_expense_plot_name+'_pie_incomes.png') }}"
+                 class="img-fluid">
+        </picture>
+    </div>
+    <div class="border-left"></div>
+    <div class="col-lg">
+        <h2 class="mt-5">Wydatki<br> <span class="text-danger">{{ expenses_month_choosed }}</span><small
+                class="text-muted font-size"> PLN</small></h2>
+        <picture>
+            <img src="{{ url_for('static', filename='plots/'+income_expense_plot_name+'_pie_expenses.png') }}"
+                 class="img-fluid">
+        </picture>
+    </div>
+</div>
+{% include 'budget-action-forms.html' %}
+{% endblock contentmain %}

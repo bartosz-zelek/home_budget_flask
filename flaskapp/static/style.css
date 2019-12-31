@@ -1,0 +1,33 @@
+body{
+    background-image: url('bg.png');
+    font-size: 17px;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+.logo-color{
+    color: #c9523a;
+}
+h1{
+    text-align: center;
+}
+.w-75, .w-50{
+    margin: 0 auto;
+}
+.center-vertically{
+    position: relative;
+    top: 20%;
+}
+footer{
+    color: #f2f0e6;
+}
+.non-dec{
+    text-decoration: none!important;
+    display: block;
+    width: 44%;
+    margin: 0 auto;
+}
+.block{
+    display: block;
+}
+.edit-icon{
+    text-decoration: none;
+}
