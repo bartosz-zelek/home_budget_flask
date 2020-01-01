@@ -1,0 +1,40 @@
+{% extends 'main.html' %}
+
+{% block contentmain %}
+<h1 class="text-center">Zmiana adresu e-mail</h1>
+<div class="w-75 mt-4">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.email.label }}
+            {% if form.email.errors %}
+            {{ form.email(class='form-control is-invalid', type='email') }}
+            <div class="invalid-feedback">
+                {% for error in form.email.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            {{ form.email(class='form-control', type='email') }}
+            {% endif %}
+        </div>
+        <hr>
+        <div class="form-group">
+            {{ form.password.label }}
+            {% if form.password.errors %}
+            {{ form.password(class='form-control is-invalid') }}
+            <div class="invalid-feedback">
+                {% for error in form.password.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            {{ form.password(class='form-control') }}
+            {% endif %}
+        </div>
+        <div class="text-center mb-5">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    </form>
+</div>
+{% endblock contentmain %}

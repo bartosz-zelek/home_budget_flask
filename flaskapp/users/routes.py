@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import current_user, login_user, logout_user
-from flaskapp.users.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
+from flask_login import current_user, login_user, logout_user, login_required
+from flaskapp.users.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, \
+    ChangeEmailForm, ChangePasswordForm
 from flaskapp.models import User
 from flaskapp import bcrypt, db
 from .utils import send_reset_email
-
+from flaskapp.budget.routes import update_funds
 
 users = Blueprint('users', __name__)
 
@@ -65,7 +66,7 @@ def forgot_password():
     return render_template('forgot-password.html', title='Przypomnij hasło', form=form)
 
 
-@users.route('/reser-password/<string:token>', methods=['GET', 'POST'])
+@users.route('/reset-password/<string:token>', methods=['GET', 'POST'])
 def reset_password_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('budget.main'))
@@ -80,3 +81,37 @@ def reset_password_token(token):
         flash('Twoje hasło zostało zmienione! Możesz się teraz zalogować.', 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_password.html', title='Reset hasła', form=form)
+
+
+@users.route('/change-email', methods=['GET', 'POST'])
+@login_required
+def change_email():
+    funds = update_funds()
+    form = ChangeEmailForm()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(current_user.password, form.password.data):
+            current_user.email = form.email.data
+            db.session.commit()
+            flash('Pomyślnie zmieniono adres e-mail.', 'success')
+            return redirect(url_for('budget.main'))
+        else:
+            flash('To nie jest twoje obecne hasło.', 'danger')
+            return redirect(url_for('users.change_email'))
+    return render_template('change-email.html', title='Zmień e-mail', funds=funds, form=form)
+
+
+@users.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    funds = update_funds()
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(current_user.password, form.old_password.data):
+            current_user.password = bcrypt.generate_password_hash(form.new_password.data)
+            db.session.commit()
+            flash('Pomyślnie zmieniono hasło.', 'success')
+            return redirect(url_for('budget.main'))
+        else:
+            flash('To nie jest twoje obecne hasło.', 'danger')
+            return redirect(url_for('users.change_password'))
+    return render_template('change-password.html', title='Zmień hasło', funds=funds, form=form)
