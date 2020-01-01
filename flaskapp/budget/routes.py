@@ -6,8 +6,10 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from matplotlib import pyplot as plt
 from flaskapp import db
-from flaskapp.budget.forms import AddIncomeForm, AddExpenseForm, AddIncomeCategoryForm, AddExpenseCategoryForm
+from flaskapp.budget.forms import AddIncomeForm, AddExpenseForm, AddIncomeCategoryForm, AddExpenseCategoryForm, \
+    TransferMoneyForm
 from flaskapp.models import BudgetAction, MoneySource, BudgetActionType, BudgetActionCategory
+from wtforms.validators import ValidationError
 
 budget = Blueprint('budget', __name__)
 matplotlib.use('Agg')
@@ -17,6 +19,12 @@ def update_funds():
     actions = BudgetAction.query.filter_by(user_id=current_user.id).all()
     income_id = BudgetActionType.query.filter_by(name='income').first().id
     expense_id = BudgetActionType.query.filter_by(name='expense').first().id
+
+    wallet_id = MoneySource.query.filter_by(name='portfel').first().id
+    account_id = MoneySource.query.filter_by(name='konta').first().id
+    moneybox_id = MoneySource.query.filter_by(name='skarbonki').first().id
+    deposit_id = MoneySource.query.filter_by(name='lokaty').first().id
+
     funds = {
         'sum': 0,
         'wallet': 0,
@@ -24,43 +32,52 @@ def update_funds():
         'saving': {
             'moneybox': 0,
             'deposit': 0
+        },
+        'by_id': {
+            wallet_id: 0,
+            account_id: 0,
+            moneybox_id: 0,
+            deposit_id: 0
         }
     }
-
-    wallet_id = MoneySource.query.filter_by(name='portfel').first().id
-    account_id = MoneySource.query.filter_by(name='konta').first().id
-    moneybox_id = MoneySource.query.filter_by(name='skarbonki').first().id
-    deposit_id = MoneySource.query.filter_by(name='lokaty').first().id
 
     for action in actions:
         if action.money_source_id == wallet_id:
             if action.budget_action_type_id == income_id:
                 funds['wallet'] += action.amount
                 funds['sum'] += action.amount
+                funds['by_id'][wallet_id] += action.amount
             elif action.budget_action_type_id == expense_id:
                 funds['wallet'] -= action.amount
                 funds['sum'] -= action.amount
+                funds['by_id'][wallet_id] -= action.amount
         elif action.money_source_id == account_id:
             if action.budget_action_type_id == income_id:
                 funds['account'] += action.amount
                 funds['sum'] += action.amount
+                funds['by_id'][account_id] += action.amount
             elif action.budget_action_type_id == expense_id:
                 funds['account'] -= action.amount
                 funds['sum'] -= action.amount
+                funds['by_id'][account_id] -= action.amount
         elif action.money_source_id == moneybox_id:
             if action.budget_action_type_id == income_id:
                 funds['saving']['moneybox'] += action.amount
                 funds['sum'] += action.amount
+                funds['by_id'][moneybox_id] += action.amount
             elif action.budget_action_type_id == expense_id:
                 funds['saving']['moneybox'] -= action.amount
                 funds['sum'] -= action.amount
+                funds['by_id'][moneybox_id] -= action.amount
         elif action.money_source_id == deposit_id:
             if action.budget_action_type_id == income_id:
                 funds['saving']['deposit'] += action.amount
                 funds['sum'] += action.amount
+                funds['by_id'][deposit_id] += action.amount
             elif action.budget_action_type_id == expense_id:
                 funds['saving']['deposit'] -= action.amount
                 funds['sum'] -= action.amount
+                funds['by_id'][deposit_id] -= action.amount
     return funds
 
 
@@ -198,6 +215,9 @@ def main():
     form_income, income_type_id = AddIncomeForm().form_with_choices(current_user.id)
     form_expense, expense_type_id = AddExpenseForm().form_with_choices(current_user.id)
     if form_income.validate_on_submit():  # sprawdzić poprawność kategorii i źródła
+        if form_income.amount_income.data < 0:
+            flash('Wartość pola koszt nie może być mniejsza lub równa zero.', 'warning')
+            return redirect(url_for('budget.main'))
         income = BudgetAction(
             budget_action_type_id=income_type_id,
             amount=form_income.amount_income.data,
@@ -213,6 +233,9 @@ def main():
         flash('Pomyślnie dodano przychód.', 'success')
         return redirect(url_for('budget.main'))
     elif form_expense.validate_on_submit():
+        if form_expense.amount_expense.data < 0:
+            flash('Wartość pola kwota nie może być mniejsza lub równa zero.', 'warning')
+            return redirect(url_for('budget.main'))
         expense = BudgetAction(
             budget_action_type_id=expense_type_id,
             amount=form_expense.amount_expense.data,
@@ -334,12 +357,13 @@ def mod_category():
 @budget.route('/modify-budget-actions', methods=['GET', 'POST'])
 @login_required
 def mod_budget_actions():
-    funds = update_funds()
     income_id = BudgetActionType.query.filter_by(name='income').first().id
     expense_id = BudgetActionType.query.filter_by(name='expense').first().id
     page = request.args.get('page', 1, type=int)
     actions = BudgetAction.query.filter_by(user_id=current_user.id).order_by(BudgetAction.date.desc()).paginate(
         page=page, per_page=12)
+
+    funds = update_funds()
 
     sources = MoneySource.query.all()
     source_by_id = {}
@@ -416,3 +440,44 @@ def mod_budget_actions():
                                    source_by_id=source_by_id, action=action)
     return render_template('mod-budget-actions.html', title='Transakcje', funds=funds, actions=actions,
                            income_id=income_id, expense_id=expense_id, source_by_id=source_by_id)
+
+
+@budget.route('/transfer-money', methods=['GET', 'POST'])
+@login_required
+def transfer_money():
+    funds = update_funds()
+    form = TransferMoneyForm().form_with_choices()
+    income_id = BudgetActionType.query.filter_by(name='income').first().id
+    expense_id = BudgetActionType.query.filter_by(name='expense').first().id
+    if form.validate_on_submit():
+        if form.amount.data > funds['by_id'][form.money_source.data]:
+            flash('Nie masz tylu pieniędzy w źródle.', 'warning')
+            return redirect(url_for('budget.transfer_money'))
+        try:
+            income = BudgetAction(
+                budget_action_type_id=income_id,
+                amount=form.amount.data,
+                title='Transfer pieniędzy',
+                budget_action_category_id=-1,
+                money_source_id=form.money_destination.data,
+                user_id=current_user.id
+            )
+            expense = BudgetAction(
+                budget_action_type_id=expense_id,
+                amount=form.amount.data,
+                title='Transfer pieniędzy',
+                budget_action_category_id=-1,
+                money_source_id=form.money_source.data,
+                user_id=current_user.id
+            )
+            db.session.begin_nested()
+            db.session.add(expense)
+            db.session.add(income)
+            db.session.commit()
+        except:
+            session.rollback()
+            db.session.commit()
+        flash('Pieniądze zostały przeniesione.', 'success')
+        return redirect(url_for('budget.transfer_money'))
+
+    return render_template('transfer-money.html', title='Przenoszenie środków', funds=funds, form=form)

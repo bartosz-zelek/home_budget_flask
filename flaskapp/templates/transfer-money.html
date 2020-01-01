@@ -1,49 +1,48 @@
 {% extends 'main.html' %}
 
 {% block contentmain %}
-<h1>Zmiana adresu e-mail</h1>
+<h1>Przenoszenie środków</h1>
 <hr>
-<div class="w-75 mt-5">
+<div class="w-75">
     <form method="POST">
         {{ form.hidden_tag() }}
         <div class="form-group">
-            {{ form.old_password.label }}
-            {% if form.old_password.errors %}
-            {{ form.old_password(class='form-control is-invalid') }}
+            {{ form.money_source.label }}
+            {% if form.money_source.errors %}
+            {{ form.money_source(class='form-control is-invalid') }}
             <div class="invalid-feedback">
-                {% for error in form.old_password.errors %}
+                {% for error in form.money_source.errors %}
                 <span>{{ error }}</span>
                 {% endfor %}
             </div>
             {% else %}
-            {{ form.old_password(class='form-control') }}
-            {% endif %}
-        </div>
-        <hr>
-        <div class="form-group">
-            {{ form.new_password.label }}
-            {% if form.new_password.errors %}
-            {{ form.new_password(class='form-control is-invalid') }}
-            <div class="invalid-feedback">
-                {% for error in form.new_password.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% else %}
-            {{ form.new_password(class='form-control') }}
+            {{ form.money_source(class='form-control') }}
             {% endif %}
         </div>
         <div class="form-group">
-            {{ form.new_password_repeated.label }}
-            {% if form.new_password_repeated.errors %}
-            {{ form.new_password_repeated(class='form-control is-invalid') }}
+            {{ form.money_destination.label }}
+            {% if form.money_destination.errors %}
+            {{ form.money_destination(class='form-control is-invalid') }}
             <div class="invalid-feedback">
-                {% for error in form.new_password_repeated.errors %}
+                {% for error in form.money_destination.errors %}
                 <span>{{ error }}</span>
                 {% endfor %}
             </div>
             {% else %}
-            {{ form.new_password_repeated(class='form-control') }}
+            {{ form.money_destination(class='form-control') }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.amount.label }}
+            {% if form.amount.errors %}
+            {{ form.amount(class='form-control is-invalid', type='number', step='0.01') }}
+            <div class="invalid-feedback">
+                {% for error in form.amount.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            {{ form.amount(class='form-control', type='number', step='0.01') }}
             {% endif %}
         </div>
         <div class="text-center mb-5">

@@ -16,7 +16,8 @@ class BudgetAction(db.Model):
     budget_action_type_id = db.Column(db.Integer, db.ForeignKey('budget_action_type.id'), nullable=False)
     amount = db.Column(db.Numeric(10, 2, 2), nullable=False)
     title = db.Column(db.String(60), nullable=False)
-    budget_action_category_id = db.Column(db.Integer, db.ForeignKey('budget_action_category.id'), nullable=False, default=-1)
+    budget_action_category_id = db.Column(db.Integer, db.ForeignKey('budget_action_category.id'), nullable=False,
+                                          default=-1)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     money_source_id = db.Column(db.Integer, db.ForeignKey('money_source.id'), nullable=False)
     remember = db.Column(db.Boolean, default=False)
@@ -46,7 +47,7 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
 
-class BudgetActionType(db.Model):   # wydatek/przychód
+class BudgetActionType(db.Model):  # wydatek/przychód
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
 
@@ -54,7 +55,7 @@ class BudgetActionType(db.Model):   # wydatek/przychód
     budget_action = db.relationship('BudgetAction', backref='budget_action', lazy=True)
 
 
-class BudgetActionCategory(db.Model):   # np.: pensja, zakupy
+class BudgetActionCategory(db.Model):  # np.: pensja, zakupy
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)

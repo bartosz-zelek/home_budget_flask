@@ -1,7 +1,6 @@
-from flaskapp.models import User
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
 class LoginForm(FlaskForm):
@@ -41,5 +40,5 @@ class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Twoje obecne hasło', validators=[DataRequired()])
     new_password = PasswordField('Nowe hasło', validators=[DataRequired(), Length(min=6)])
     new_password_repeated = PasswordField('Powtórz nowe hasło', validators=[DataRequired(), EqualTo('new_password',
-                                                                                           message='Pola nie są takie same.')])
+                                                                                                    message='Pola nie są takie same.')])
     submit = SubmitField('Resetuj hasło')

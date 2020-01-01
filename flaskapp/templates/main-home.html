@@ -31,14 +31,16 @@
     {% for action in actions_month_choosed %}
     <tr>
         <td>{{ action.date.strftime('%d.%m.%Y') }}</td>
-        <td>{% if action.budget_action_category_id > 0 %}{{ action.budget_action_category.name.capitalize() }}{% else %}Brak
+        <td>{% if action.budget_action_category_id > 0 %}{{ action.budget_action_category.name.capitalize() }}{% else
+            %}Brak
             kategorii{% endif %}
         </td>
         <td>{% if action.budget_action_type_id == income_id %}<span class="text-success">+{{ action.amount }}</span>{%
             endif %}{% if action.budget_action_type_id == expense_id %}<span
                     class="text-danger">-{{ action.amount }}</span>{% endif %}
         </td>
-        <td><a class="fas fa-edit edit-icon text-dark" href="{{ url_for('budget.mod_budget_actions', action_id=action.id) }}"></a></td>
+        <td><a class="fas fa-edit edit-icon text-dark"
+               href="{{ url_for('budget.mod_budget_actions', action_id=action.id) }}"></a></td>
     </tr>
     {% endfor %}
     </tbody>
