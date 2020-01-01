@@ -18,8 +18,8 @@ class AddIncomeForm(FlaskForm):
     def form_with_choices(user_id):
         form = AddIncomeForm()
         action_type_id = BudgetActionType.query.filter_by(name='income').first().id
-        form.category_income.choices = ([(cat.id, cat.name) for cat in BudgetActionCategory.query.filter_by(user_id=user_id, action_type_id=action_type_id)] or [(-1, 'Brak kategorii')])
-        form.source_income.choices = [(src.id, src.name) for src in MoneySource.query.order_by(MoneySource.id.desc()).all()]
+        form.category_income.choices = ([(cat.id, cat.name.capitlaize()) for cat in BudgetActionCategory.query.filter_by(user_id=user_id, action_type_id=action_type_id)] or [(-1, 'Brak kategorii')])
+        form.source_income.choices = [(src.id, src.name.capitalize()) for src in MoneySource.query.order_by(MoneySource.id.desc()).all()]
         return form, action_type_id
 
 
@@ -36,8 +36,8 @@ class AddExpenseForm(FlaskForm):
     def form_with_choices(user_id):
         form = AddExpenseForm()
         action_type_id = BudgetActionType.query.filter_by(name='expense').first().id
-        form.category_expense.choices = ([(cat.id, cat.name) for cat in BudgetActionCategory.query.filter_by(user_id=user_id, action_type_id=action_type_id)] or [(-1, 'Brak kategorii')])
-        form.source_expense.choices = [(src.id, src.name) for src in MoneySource.query.order_by(MoneySource.id.desc()).all()]
+        form.category_expense.choices = ([(cat.id, cat.name.capitalize()) for cat in BudgetActionCategory.query.filter_by(user_id=user_id, action_type_id=action_type_id)] or [(-1, 'Brak kategorii')])
+        form.source_expense.choices = [(src.id, src.name.capitalize()) for src in MoneySource.query.order_by(MoneySource.id.desc()).all()]
         return form, action_type_id
 
 

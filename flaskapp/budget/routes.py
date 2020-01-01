@@ -306,7 +306,7 @@ def mod_category():
         db.session.add(income_category)
         db.session.commit()
         flash('Pomyślnie dodano kategorię przychodu.', 'success')
-        return redirect(url_for('budget.add_category'))
+        return redirect(url_for('budget.mod_category'))
     elif expense_category_form.validate_on_submit():
         expense_category = BudgetActionCategory(
             name=expense_category_form.name_expense.data,
@@ -316,7 +316,7 @@ def mod_category():
         db.session.add(expense_category)
         db.session.commit()
         flash('Pomyślnie dodano kategorię wydatku.', 'success')
-        return redirect(url_for('budget.add_category'))
+        return redirect(url_for('budget.mod_category'))
     if income_category_form.errors.items() and income_category_form.submit_income.data:
         expense_category_form = AddExpenseCategoryForm()
         return render_template('mod-category.html', title='Modyfikacja kategorii', funds=funds,
